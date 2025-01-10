@@ -1,0 +1,25 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract TVCharacterNFT is ERC721URIStorage, Ownable {
+    uint256 public constant MAX_NFTS = 3000;
+    uint256 public totalMinted;
+
+    constructor() ERC721("TVCharacterNFT", "TVC") {}
+
+    function mintNFT(address recipient, string memory tokenURI) public onlyOwner {
+        require(totalMinted < MAX_NFTS, "Maximum NFT limit reached");
+        totalMinted++;
+        uint256 tokenId = totalMinted;
+        _mint(recipient, tokenId);
+        _setTokenURI(tokenId, tokenURI);
+    }
+
+    function updateTokenURI(uint256 tokenId, string memory newTokenURI) public {
+        require(ownerOf(tokenId) == msg.sender, "Caller is not the owner");
+        _setTokenURI(tokenId, newTokenURI);
+    }
+}
